@@ -1,1 +1,120 @@
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class SolarSystemSimulation extends Application {
+
+private double thetaMercury = 0, thetaVenus = 0, thetaEarth = 0, thetaMars = 0, thetaJupiter = 0;
+private double speedFactor = 1.0;
+
+private Text timestampText;
+
+@Override
+public void start(Stage primaryStage) {
+    Group root = new Group();
+    Scene scene = new Scene(root, 900, 600, Color.BLACK);
+
+    double centerX = 450;
+    double centerY = 300;
+
+    // Sun
+    Circle sun = new Circle(centerX, centerY, 30, Color.ORANGE);
+    root.getChildren().add(sun);
+    Text sunLabel = new Text(centerX + 35, centerY, "SUN");
+    sunLabel.setFill(Color.WHITE);
+    root.getChildren().add(sunLabel);
+
+    // Planets
+    Circle mercury = new Circle(5, Color.GRAY);
+    Circle venus = new Circle(8, Color.YELLOW);
+    Circle earth = new Circle(10, Color.GREEN);
+    Circle mars = new Circle(9, Color.RED);
+    Circle jupiter = new Circle(15, Color.BEIGE);
+
+    root.getChildren().addAll(mercury, venus, earth, mars, jupiter);
+
+    // Planet labels
+    Text mercuryLabel = new Text("Mercury"); mercuryLabel.setFill(Color.WHITE);
+    Text venusLabel = new Text("Venus"); venusLabel.setFill(Color.WHITE);
+    Text earthLabel = new Text("Earth"); earthLabel.setFill(Color.WHITE);
+    Text marsLabel = new Text("Mars"); marsLabel.setFill(Color.WHITE);
+    Text jupiterLabel = new Text("Jupiter"); jupiterLabel.setFill(Color.WHITE);
+
+    root.getChildren().addAll(mercuryLabel, venusLabel, earthLabel, marsLabel, jupiterLabel);
+
+    // Extra stars/markers
+    String[] stars = {"BIG DOG","LITTLE DOG","UNICON","COMPASS","STERN","DOVE"};
+    double[][] starPositions = {{100,50},{800,100},{400,50},{700,500},{150,400},{600,200}};
+    for(int i=0;i<stars.length;i++){
+        Text star = new Text(starPositions[i][0], starPositions[i][1], stars[i]);
+        star.setFill(Color.LIGHTBLUE);
+        root.getChildren().add(star);
+    }
+
+    // Timestamp
+    timestampText = new Text(10, 580, "");
+    timestampText.setFill(Color.LIME);
+    root.getChildren().add(timestampText);
+
+    AnimationTimer timer = new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+            double radiusMercury = 60;
+            double radiusVenus = 90;
+            double radiusEarth = 130;
+            double radiusMars = 180;
+            double radiusJupiter = 250;
+
+            double speedMercury = 0.05 * speedFactor;
+            double speedVenus = 0.035 * speedFactor;
+            double speedEarth = 0.025 * speedFactor;
+            double speedMars = 0.02 * speedFactor;
+            double speedJupiter = 0.01 * speedFactor;
+
+            thetaMercury += speedMercury;
+            thetaVenus += speedVenus;
+            thetaEarth += speedEarth;
+            thetaMars += speedMars;
+            thetaJupiter += speedJupiter;
+
+            // Update planet positions
+            updatePlanet(mercury, mercuryLabel, centerX, centerY, radiusMercury, thetaMercury);
+            updatePlanet(venus, venusLabel, centerX, centerY, radiusVenus, thetaVenus);
+            updatePlanet(earth, earthLabel, centerX, centerY, radiusEarth, thetaEarth);
+            updatePlanet(mars, marsLabel, centerX, centerY, radiusMars, thetaMars);
+            updatePlanet(jupiter, jupiterLabel, centerX, centerY, radiusJupiter, thetaJupiter);
+
+            // Update timestamp
+            LocalDateTime nowTime = LocalDateTime.now();
+            timestampText.setText("Sim Time: " + nowTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+    };
+    timer.start();
+
+    primaryStage.setTitle("Solar System Simulation");
+    primaryStage.setScene(scene);
+    primaryStage.show();
+}
+
+private void updatePlanet(Circle planet, Text label, double centerX, double centerY, double radius, double theta){
+    double x = centerX + radius * Math.cos(theta);
+    double y = centerY + radius * Math.sin(theta);
+    planet.setCenterX(x);
+    planet.setCenterY(y);
+    label.setX(x + 10);
+    label.setY(y);
+}
+
+public static void main(String[] args) {
+    launch(args);
+}
+
+}
