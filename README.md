@@ -1,1 +1,1 @@
-work well on replit compler , work on web. was javafx code orgnaly, 
+work well on replit compiler , work on web. was javafx code originaly, 
