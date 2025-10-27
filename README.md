@@ -1,1 +1,1 @@
-python, work well on replit compler , work on web. 
+work well on replit compler , work on web. was javafx code orgnaly, 
